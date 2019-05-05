@@ -1,12 +1,13 @@
 import React from 'react';
 import { cluster, hierarchy, HierarchyLink, HierarchyNode } from 'd3-hierarchy';
 import { IChartStyle } from '../../core';
-import { Links, Nodes, IHierarchialData } from '../core';
+import { Links, Nodes, IHierarchialData, HierarchialFilter } from '../core';
 
 interface IProps extends IChartStyle {
   height: number;
   width: number;
   data: IHierarchialData;
+  filter: HierarchialFilter;
 }
 
 interface IState {
@@ -40,7 +41,7 @@ export default class Dendogram extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { height, width, margin } = this.props;
+    const { height, width, margin, filter } = this.props;
     const { links, nodes } = this.state;
 
     return (
@@ -51,8 +52,8 @@ export default class Dendogram extends React.Component<IProps, IState> {
         style={{ border: '1px solid black' }}
       >
         <g style={{ transform: `translate(${margin}px, ${margin}px)` }}>
-          <Links links={links} />
-          <Nodes nodes={nodes} />
+          <Links links={links} filter={filter} />
+          <Nodes nodes={nodes} filter={filter} />
         </g>
       </svg>
     );

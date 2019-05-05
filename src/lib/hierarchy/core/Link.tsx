@@ -1,10 +1,22 @@
 import React from 'react';
 import { select } from 'd3-selection';
 import { verticalLinkGenerator } from './generators';
-import { HierarchyPointLink } from 'd3-hierarchy';
+import { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
+import HierachicalFilter from './HierarchialFilter';
 
 interface IProps {
   link: HierarchyPointLink<any>;
+  filter: HierachicalFilter;
+}
+
+function haveDescendantsMetFilterCritirea(
+  node: HierarchyPointNode<any>,
+  filter: HierachicalFilter
+) {
+  const filteredDescendants = node
+    .descendants()
+    .filter(descendant => filter(descendant.data));
+  return filteredDescendants.length > 0;
 }
 
 class Link extends React.Component<IProps> {
@@ -20,7 +32,26 @@ class Link extends React.Component<IProps> {
   }
 
   render() {
-    return <path ref={this.ref} stroke={'black'} fill={'none'} />;
+    const { link, filter } = this.props;
+    // let hasLinkMetFilterCriteria = true;
+    // const hasSourceMetFilterCriteria = filter(link.source.data);
+    // const hasTargetMetFilterCriteria = filter(link.target.data);
+    // hasLinkMetFilterCriteria =
+    //   hasSourceMetFilterCriteria || hasTargetMetFilterCriteria;
+    const haveTargetNodeDescendantsMetFilterCritirea = haveDescendantsMetFilterCritirea(
+      link.target,
+      filter
+    );
+
+    return (
+      <path
+        ref={this.ref}
+        fill={'none'}
+        stroke={`rgba(0, 0, 0, ${
+          haveTargetNodeDescendantsMetFilterCritirea ? 1 : 0.1
+        })`}
+      />
+    );
   }
 }
 
